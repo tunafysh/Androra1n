@@ -5,9 +5,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
@@ -22,7 +24,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.tuanfysh.androra1n.ui.theme.Androra1nTheme
 
 class MainActivity : ComponentActivity() {
@@ -67,10 +73,13 @@ fun ShowHideBoxExample() {
             if (isVisible) {
                 Box(
                     modifier = Modifier
-                        .background(MaterialTheme.colorScheme.primary),
+                        .clip(RoundedCornerShape(10.dp))
+                        .border(1.dp,MaterialTheme.colorScheme.primary, RoundedCornerShape(10.dp))
+                        .background(MaterialTheme.colorScheme.onPrimary)
+                        .padding(5.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(text = "Hello, world!", color = MaterialTheme.colorScheme.onPrimary)
+                    Text(text = "Hello, world!", color = Color.White)
                 }
             }
         }
