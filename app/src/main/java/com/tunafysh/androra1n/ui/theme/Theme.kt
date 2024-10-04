@@ -1,6 +1,5 @@
-package com.tuanfysh.androra1n.ui.theme
+package com.tunafysh.androra1n.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

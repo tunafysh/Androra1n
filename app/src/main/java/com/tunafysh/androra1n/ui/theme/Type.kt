@@ -1,4 +1,4 @@
-package com.tuanfysh.androra1n.ui.theme
+package com.tunafysh.androra1n.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.tuanfysh.androra1n"
+    namespace = "com.tunafysh.androra1n"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.tuanfysh.androra1n"
+        applicationId = "com.tunafysh.androra1n"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

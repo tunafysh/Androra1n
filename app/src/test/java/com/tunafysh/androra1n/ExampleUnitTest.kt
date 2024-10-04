@@ -1,4 +1,4 @@
-package com.tuanfysh.androra1n
+package com.tunafysh.androra1n
 
 import org.junit.Test
 

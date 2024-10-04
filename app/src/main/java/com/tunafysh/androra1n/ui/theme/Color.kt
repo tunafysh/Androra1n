@@ -1,4 +1,4 @@
-package com.tuanfysh.androra1n.ui.theme
+package com.tunafysh.androra1n.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
