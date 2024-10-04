@@ -26,7 +26,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.tuanfysh.androra1n.ui.theme.Androra1nTheme
@@ -70,20 +71,55 @@ fun ShowHideBoxExample() {
                 .padding(it),
             contentAlignment = Alignment.Center
         ) {
+            var parsedString = parseAnsiToAnnotatedString("Hello, world!\n \u001B[36mtest")
             if (isVisible) {
                 Box(
                     modifier = Modifier
-                        .clip(RoundedCornerShape(10.dp))
                         .border(1.dp,MaterialTheme.colorScheme.primary, RoundedCornerShape(10.dp))
+                        .clip(RoundedCornerShape(10.dp))
                         .background(MaterialTheme.colorScheme.onPrimary)
-                        .padding(5.dp),
+                        .padding(10.dp, 5.dp),
+
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(text = "Hello, world!", color = Color.White)
+                    Text(text = parsedString , color = Color.White)
                 }
             }
         }
     }
+}
+
+fun parseAnsiToAnnotatedString(input: String): AnnotatedString {
+    val builder = AnnotatedString.Builder()
+    var currentIndex = 0
+
+    while (currentIndex < input.length) {
+        if (input[currentIndex] == '\u001B') {
+            val endIndex = input.indexOf('m', currentIndex)
+            if (endIndex != -1) {
+                val code = input.substring(currentIndex + 2, endIndex).toIntOrNull()
+                val style = when (code) {
+                    30, 90 -> SpanStyle(color = Color.Black)
+                    31, 91 -> SpanStyle(color = Color.Red)
+                    32, 92 -> SpanStyle(color = Color.Green)
+                    33, 93 -> SpanStyle(color = Color.Yellow)
+                    34, 94 -> SpanStyle(color = Color.Blue)
+                    35, 95 -> SpanStyle(color = Color.Magenta)
+                    36, 96 -> SpanStyle(color = Color.Cyan)
+                    37, 97 -> SpanStyle(color = Color.White)
+
+                    // Add more ANSI codes as needed
+                    else -> SpanStyle()
+                }
+                builder.pushStyle(style)
+                currentIndex = endIndex + 1
+            }
+        } else {
+            builder.append(input[currentIndex])
+            currentIndex++
+        }
+    }
+    return builder.toAnnotatedString()
 }
 
 @Composable
@@ -94,11 +130,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         color = MaterialTheme.colorScheme.onSurface
     )
 }
-
-fun idk(content: String): String {
-    return "Hello $content!"
-}
-
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
