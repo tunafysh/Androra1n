@@ -28,8 +28,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.tunafysh.androra1n.ui.theme.Androra1nTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -54,14 +58,13 @@ class MainActivity : ComponentActivity() {
 //TODO: Create an Icon for this app and add the Consolas font for the logs.
 @Composable
 fun LogBox() {
-    var isVisible by remember { mutableStateOf(true)}
+    var isVisible by remember { mutableStateOf(false)}
     val annotatedText = parseAnsiToAnnotatedString("\u001B[36m[INFO] This is a test.\n\u001B[33m[WARN] This is a warning.\n\u001B[31m[ERROR] Something went wrong ig...")
      Box(
          modifier = Modifier
              .fillMaxSize(),
          contentAlignment = Alignment.Center
      ) {
-
          if(!isVisible){
              Button(onClick = { isVisible = !isVisible }) { Text("Show logs")}
          }
@@ -76,7 +79,7 @@ fun LogBox() {
                         .clickable { isVisible = !isVisible }
                 )
                 {
-                    Text(text = annotatedText, color = Color.White)
+                    Text(text = annotatedText, color = Color.White, fontFamily = FontFamily(Font(R.font.consolas)), style = TextStyle(letterSpacing = 0.5.sp))
                 }
             }
         }
@@ -141,7 +144,7 @@ fun ExecuteCommandAndDisplayOutput() {
                 outputFlow.value += line + "\n"
             }
         } catch (e: Exception) {
-            // Handle exceptions here
+            println(e.message)
         }
     }.start()
     Text(text= outputText, color = Color.White)
