@@ -1,5 +1,6 @@
 package com.tunafysh.androra1n
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -38,21 +40,38 @@ import com.tunafysh.androra1n.ui.theme.Androra1nTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class MainActivity : ComponentActivity() {
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             Androra1nTheme {
-                Box(
-                    modifier = Modifier.fillMaxSize()
-                        .background(MaterialTheme.colorScheme.background),
-                    contentAlignment = Alignment.Center
+                Scaffold(
+                    modifier = Modifier,
                 ) {
-                    LogBox()
+                    Box(
+                        modifier = Modifier.fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        MainMenu()
+                    }
                 }
             }
         }
     }
+}
+
+@Composable
+fun TopBar() {
+    Box( modifier = Modifier){
+        LogBox()
+    }
+}
+
+@Composable
+fun MainMenu() {
+    Text("Hello World!")
 }
 
 //TODO: Create an Icon for this app and add the Consolas font for the logs.
