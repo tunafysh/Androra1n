@@ -9,13 +9,20 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
@@ -40,23 +47,12 @@ import com.tunafysh.androra1n.ui.theme.Androra1nTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class MainActivity : ComponentActivity() {
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             Androra1nTheme {
-                Scaffold(
-                    modifier = Modifier,
-                ) {
-                    Box(
-                        modifier = Modifier.fillMaxSize()
-                            .background(MaterialTheme.colorScheme.background),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        MainMenu()
-                    }
-                }
+                MainMenu()
             }
         }
     }
@@ -69,12 +65,77 @@ fun TopBar() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 fun MainMenu() {
-    Text("Hello World!")
+    var rootful = false
+    var showBottomSheet by remember { mutableStateOf(false) }
+    Scaffold (
+        modifier = Modifier
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
+            contentAlignment = Alignment.Center
+        ) {
+            Button(onClick = {showBottomSheet = true} ) {
+                Text("Parameters")
+            }
+        }
+        if(showBottomSheet) {
+            ModalBottomSheet(onDismissRequest = {showBottomSheet = false}) {
+                Column(
+                    modifier = Modifier
+                        .padding(7.dp)
+                )
+                {
+                    JailbreakTypeSelector()
+                }
+            }
+        }
+    }
 }
 
-//TODO: Create an Icon for this app and add the Consolas font for the logs.
+@Composable
+fun JailbreakTypeSelector() {
+    var selectedOption by remember { mutableStateOf("") }
+
+    Row (
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(7.dp, 0.dp),
+        horizontalArrangement = Arrangement.SpaceAround,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text("Jailbreak type:")
+        Column {
+
+            Row (
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.End
+            ){
+            RadioButton(
+                selected = (selectedOption == "Rootless"),
+                onClick = { selectedOption = "Rootless" }
+            )
+            Text("Rootless")
+        }
+            Row (
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.End
+            ){
+            RadioButton(
+                selected = (selectedOption == "Rootful"),
+                onClick = { selectedOption = "Rootful" }
+            )
+            Text("Rootful")
+        }
+        }
+    }
+}
+
+
 @Composable
 fun LogBox() {
     var isVisible by remember { mutableStateOf(false)}
