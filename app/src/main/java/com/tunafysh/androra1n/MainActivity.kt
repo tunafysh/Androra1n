@@ -17,13 +17,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -35,12 +38,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tunafysh.androra1n.ui.theme.Androra1nTheme
@@ -58,39 +58,129 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun TopBar() {
-    Box( modifier = Modifier){
-        LogBox()
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 fun MainMenu() {
-    var rootful = false
+    var params = Parameters()
+    var rootful by remember { mutableStateOf(false) }
+    var createFakefs by remember { mutableStateOf(false) }
+    var createBindfs by remember { mutableStateOf(false) }
+    var cleanFakefs by remember { mutableStateOf(false) }
+    var verbose by remember { mutableStateOf(true) }
+    var safeMode by remember { mutableStateOf(false) }
+    var revertInstall by remember { mutableStateOf(false) }
+    var serial by remember { mutableStateOf(false) }
+    var debug by remember { mutableStateOf(false) }
+
     var showBottomSheet by remember { mutableStateOf(false) }
+    var scrollState = rememberScrollState()
     Scaffold (
-        modifier = Modifier
+        modifier = Modifier,
+        topBar = {
+            Box( modifier = Modifier.fillMaxWidth().padding(0.dp,30.dp,0.dp,0.dp), contentAlignment = Alignment.CenterEnd) {
+                LogBox()
+            }
+        }
     ) {
         Box(
             modifier = Modifier.fillMaxSize()
                 .background(MaterialTheme.colorScheme.background),
             contentAlignment = Alignment.Center
         ) {
+            Box(modifier = Modifier){
+
+            }
+            Text(parse(params))
             Button(onClick = {showBottomSheet = true} ) {
                 Text("Parameters")
             }
         }
         if(showBottomSheet) {
-            ModalBottomSheet(onDismissRequest = {showBottomSheet = false}) {
+            ModalBottomSheet(onDismissRequest = {showBottomSheet = false}, modifier = Modifier) {
                 Column(
                     modifier = Modifier
+                        .verticalScroll(scrollState)
                         .padding(7.dp)
                 )
                 {
-                    JailbreakTypeSelector()
+                    rootful = jailbreakTypeSelector(rootful)
+                    AnimatedVisibility(visible = rootful) {
+                        Column {
+                        Row (
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text("Create FakeFS")
+                            Switch(checked = createFakefs, onCheckedChange = {createFakefs = it})
+                        }
+                        Row (
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text("Create BindFS")
+                            Switch(checked = createBindfs, onCheckedChange = {createBindfs = it})
+                        }
+                        Row (
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text("Clean FakeFS")
+                            Switch(checked = cleanFakefs, onCheckedChange = {cleanFakefs = it})
+                        }
+                        }
+                    }
+                    Row (
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("Verbose")
+                        Switch(checked = verbose, onCheckedChange = {verbose = it})
+                    }
+                    Row (
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("Safe mode")
+                        Switch(checked = safeMode, onCheckedChange = {safeMode = it})
+                    }
+                    Row (
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("Revert install")
+                        Switch(checked = revertInstall, onCheckedChange = {revertInstall = it})
+                    }
+                    Row (
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("Serial")
+                        Switch(checked = serial, onCheckedChange = {serial = it})
+                    }
+                    Row (
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("Debug")
+                        Switch(checked = debug, onCheckedChange = {debug = it})
+                    }
                 }
             }
         }
@@ -98,9 +188,8 @@ fun MainMenu() {
 }
 
 @Composable
-fun JailbreakTypeSelector() {
-    var selectedOption by remember { mutableStateOf("") }
-
+fun jailbreakTypeSelector( root: Boolean): Boolean {
+    var rootful by remember { mutableStateOf(root) }
     Row (
         modifier = Modifier
             .fillMaxWidth()
@@ -108,6 +197,7 @@ fun JailbreakTypeSelector() {
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically
     ) {
+
         Text("Jailbreak type:")
         Column {
 
@@ -116,8 +206,8 @@ fun JailbreakTypeSelector() {
                 horizontalArrangement = Arrangement.End
             ){
             RadioButton(
-                selected = (selectedOption == "Rootless"),
-                onClick = { selectedOption = "Rootless" }
+                selected = ( rootful == false ),
+                onClick = { rootful = false }
             )
             Text("Rootless")
         }
@@ -126,13 +216,14 @@ fun JailbreakTypeSelector() {
                 horizontalArrangement = Arrangement.End
             ){
             RadioButton(
-                selected = (selectedOption == "Rootful"),
-                onClick = { selectedOption = "Rootful" }
+                selected = (rootful == true),
+                onClick = { rootful = true }
             )
             Text("Rootful")
         }
         }
     }
+    return rootful
 }
 
 
@@ -140,11 +231,6 @@ fun JailbreakTypeSelector() {
 fun LogBox() {
     var isVisible by remember { mutableStateOf(false)}
     val annotatedText = parseAnsiToAnnotatedString("\u001B[36m[INFO] This is a test.\n\u001B[33m[WARN] This is a warning.\n\u001B[31m[ERROR] Something went wrong ig...")
-     Box(
-         modifier = Modifier
-             .fillMaxSize(),
-         contentAlignment = Alignment.Center
-     ) {
          if(!isVisible){
              Button(onClick = { isVisible = !isVisible }) { Text("Show logs")}
          }
@@ -162,53 +248,7 @@ fun LogBox() {
                     Text(text = annotatedText, color = Color.White, fontFamily = FontFamily(Font(R.font.consolas)), style = TextStyle(letterSpacing = 0.5.sp))
                 }
             }
-        }
     }
-
-fun parseAnsiToAnnotatedString(input: String): AnnotatedString {
-    val builder = AnnotatedString.Builder()
-    var currentIndex = 0
-    val ansiRegex = Regex("""\u001b\[(\d+)(;\d+)*m""")
-
-    while (currentIndex < input.length) {
-        if (input[currentIndex] == '\u001B') {
-            val endIndex = input.indexOf('m', currentIndex)
-            if (endIndex != -1) {
-                val matchResult = ansiRegex.find(input, currentIndex)
-                if (matchResult != null) {
-                    val (firstCode, otherCodes) = matchResult.destructured
-                    val codes = listOf(firstCode) + otherCodes.split(";").filter { it.isNotEmpty() }
-                        val styles = codes.map { code ->
-                            when (code.toIntOrNull()) {
-                                30, 90 -> SpanStyle(color = Color.Black)
-                                31, 91 -> SpanStyle(color = Color.Red)
-                                32, 92 -> SpanStyle(color = Color.Green)
-                                33, 93 -> SpanStyle(color = Color.Yellow)
-                                34, 94 -> SpanStyle(color = Color.Blue)
-                                35, 95 -> SpanStyle(color = Color.Magenta)
-                                36, 96 -> SpanStyle(color = Color.Cyan)
-                                37, 97 -> SpanStyle(color = Color.White)
-                                1 -> SpanStyle(fontWeight = FontWeight.ExtraBold)
-                                0 -> SpanStyle(color = Color.White, fontWeight = FontWeight.Normal)
-                                // Add more ANSI codes as needed
-                                else -> SpanStyle()
-                            }
-                        }
-
-                        styles.forEach { builder.pushStyle(it) }
-                        currentIndex = matchResult.range.last + 1
-                } else {
-                    // Handle non-ANSI text
-                    currentIndex++
-                }
-            }
-        } else {
-            builder.append(input[currentIndex])
-            currentIndex++
-        }
-    }
-    return builder.toAnnotatedString()
-}
 @Composable
 fun ExecuteCommandAndDisplayOutput() {
     val outputFlow = MutableStateFlow("")
