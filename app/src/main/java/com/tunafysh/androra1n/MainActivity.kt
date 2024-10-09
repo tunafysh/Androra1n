@@ -36,6 +36,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -46,7 +47,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -68,7 +68,6 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Preview
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 fun MainMenu() {
     var rootful by remember { mutableStateOf(false) }
@@ -98,7 +97,7 @@ fun MainMenu() {
                 params.create_fakefs = createFakefs
                 params.clean_fakefs = cleanFakefs
                 var parsedParams = parse(params)
-                Text(text = "Arguments: "+parsedParams, modifier = Modifier.horizontalScroll(rememberScrollState()).width(280.dp) )
+                Text(text = "Arguments: $parsedParams", modifier = Modifier.horizontalScroll(rememberScrollState()).width(280.dp) )
             }
             Box( modifier = Modifier.fillMaxWidth().padding(0.dp,30.dp,0.dp,0.dp), contentAlignment = Alignment.CenterEnd) {
 
@@ -206,7 +205,6 @@ fun MainMenu() {
         }
     }
 }
-
 @Composable
 fun jailbreakTypeSelector( root: Boolean): Boolean {
     var rootful by remember { mutableStateOf(root) }
@@ -250,8 +248,8 @@ fun jailbreakTypeSelector( root: Boolean): Boolean {
 @Composable
 fun LogBox() {
     var isVisible by remember { mutableStateOf(false)}
-    var offsetX by remember { mutableStateOf(0f) }
-    var offsetY by remember { mutableStateOf(0f) }
+    var offsetX by remember { mutableFloatStateOf(0f) }
+    var offsetY by remember { mutableFloatStateOf(0f) }
     var annotatedText = parseAnsiToAnnotatedString("\u001B[1;36mTest")
          if(!isVisible){
              Button(onClick = { isVisible = !isVisible }) { Text("Show logs")}
