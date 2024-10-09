@@ -46,6 +46,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -67,6 +68,7 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+@Preview
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 fun MainMenu() {
     var rootful by remember { mutableStateOf(false) }
@@ -96,7 +98,7 @@ fun MainMenu() {
                 params.create_fakefs = createFakefs
                 params.clean_fakefs = cleanFakefs
                 var parsedParams = parse(params)
-                Text(text = "Arguments: "+parsedParams, modifier = Modifier.horizontalScroll(rememberScrollState()).width(300.dp) )
+                Text(text = "Arguments: "+parsedParams, modifier = Modifier.horizontalScroll(rememberScrollState()).width(280.dp) )
             }
             Box( modifier = Modifier.fillMaxWidth().padding(0.dp,30.dp,0.dp,0.dp), contentAlignment = Alignment.CenterEnd) {
 
