@@ -250,8 +250,9 @@ fun LogBox() {
     var isVisible by remember { mutableStateOf(false)}
     var offsetX by remember { mutableFloatStateOf(0f) }
     var offsetY by remember { mutableFloatStateOf(0f) }
+
     var annotatedText = parseAnsiToAnnotatedString("\u001B[1;36mTest")
-         if(!isVisible){
+    if(!isVisible){
              Button(onClick = { isVisible = !isVisible }) { Text("Show logs")}
          }
          if(isVisible){
