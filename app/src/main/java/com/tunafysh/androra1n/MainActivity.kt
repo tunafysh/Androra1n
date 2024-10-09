@@ -10,6 +10,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -82,7 +84,7 @@ fun MainMenu() {
     Scaffold (
         modifier = Modifier,
         topBar = {
-            Row( modifier = Modifier.fillMaxWidth().padding(0.dp,30.dp,0.dp,0.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+            Box(modifier = Modifier.fillMaxWidth().padding(0.dp, 30.dp,0.dp,0.dp), contentAlignment = Alignment.CenterStart){
                 var params = Parameters()
                 params.rootful = rootful
                 params.serial = serial
@@ -94,7 +96,10 @@ fun MainMenu() {
                 params.create_fakefs = createFakefs
                 params.clean_fakefs = cleanFakefs
                 var parsedParams = parse(params)
-                Text(text = "Arguments: "+parsedParams )
+                Text(text = "Arguments: "+parsedParams, modifier = Modifier.horizontalScroll(rememberScrollState()).width(300.dp) )
+            }
+            Box( modifier = Modifier.fillMaxWidth().padding(0.dp,30.dp,0.dp,0.dp), contentAlignment = Alignment.CenterEnd) {
+
                 LogBox()
             }
         }
