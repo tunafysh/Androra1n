@@ -9,12 +9,14 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -38,13 +40,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tunafysh.androra1n.ui.theme.Androra1nTheme
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,7 +67,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 fun MainMenu() {
-    var params = Parameters()
     var rootful by remember { mutableStateOf(false) }
     var createFakefs by remember { mutableStateOf(false) }
     var createBindfs by remember { mutableStateOf(false) }
@@ -78,7 +82,19 @@ fun MainMenu() {
     Scaffold (
         modifier = Modifier,
         topBar = {
-            Box( modifier = Modifier.fillMaxWidth().padding(0.dp,30.dp,0.dp,0.dp), contentAlignment = Alignment.CenterEnd) {
+            Row( modifier = Modifier.fillMaxWidth().padding(0.dp,30.dp,0.dp,0.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                var params = Parameters()
+                params.rootful = rootful
+                params.serial = serial
+                params.verbose = verbose
+                params.debug = debug
+                params.safe_mode = safeMode
+                params.revert_install = revertInstall
+                params.create_bindfs = createBindfs
+                params.create_fakefs = createFakefs
+                params.clean_fakefs = cleanFakefs
+                var parsedParams = parse(params)
+                Text(text = "Arguments: "+parsedParams )
                 LogBox()
             }
         }
@@ -88,12 +104,9 @@ fun MainMenu() {
                 .background(MaterialTheme.colorScheme.background),
             contentAlignment = Alignment.Center
         ) {
-            Box(modifier = Modifier){
 
-            }
-            Text(parse(params))
             Button(onClick = {showBottomSheet = true} ) {
-                Text("Parameters")
+                    Text("Arguments")
             }
         }
         if(showBottomSheet) {
@@ -230,20 +243,32 @@ fun jailbreakTypeSelector( root: Boolean): Boolean {
 @Composable
 fun LogBox() {
     var isVisible by remember { mutableStateOf(false)}
-    val annotatedText = parseAnsiToAnnotatedString("\u001B[36m[INFO] This is a test.\n\u001B[33m[WARN] This is a warning.\n\u001B[31m[ERROR] Something went wrong ig...")
+    var offsetX by remember { mutableStateOf(0f) }
+    var offsetY by remember { mutableStateOf(0f) }
+    var annotatedText = parseAnsiToAnnotatedString("\u001B[1;36mTest")
          if(!isVisible){
              Button(onClick = { isVisible = !isVisible }) { Text("Show logs")}
          }
-         AnimatedVisibility(visible = isVisible, modifier = Modifier.border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(10.dp))) {
+         if(isVisible){
               Box(
                   modifier = Modifier
-                        .size(450.dp, 225.dp)
-//                        .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(10.dp))
+                      .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt())}
+                      .pointerInput(Unit) {
+                          detectDragGestures { change, dragAmount ->
+                              change.consume()
+                              offsetX += dragAmount.x
+                              offsetY += dragAmount.y
+                          }
+                      }
+                      .clickable { isVisible = !isVisible }
+                      .size(450.dp, 225.dp)
+                      .fillMaxSize()
+
+                      .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(10.dp))
                         .clip(RoundedCornerShape(10.dp))
                         .background(MaterialTheme.colorScheme.onPrimary)
                         .padding(10.dp, 5.dp)
-                        .clickable { isVisible = !isVisible }
-                )
+              )
                 {
                     Text(text = annotatedText, color = Color.White, fontFamily = FontFamily(Font(R.font.consolas)), style = TextStyle(letterSpacing = 0.5.sp))
                 }
